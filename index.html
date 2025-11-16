@@ -5,19 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mein Restaurant Menu 3D</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <link rel="stylesheet" href="style.css"> <!-- Ton CSS existant -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div id="app">
-  <!-- En-tête avec logo et nom -->
   <div class="top-bar">
     <img id="restaurant-logo" src="Logo.PNG" alt="Logo" style="height:40px; border-radius:5px;">
     <div id="restaurant-name" style="font-weight:bold; font-size:18px; margin-left:10px;">Mein Restaurant</div>
     <button id="menu-toggle" class="menu-button" aria-label="Kategorie wählen">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
   </div>
 
@@ -28,9 +24,7 @@
   <div id="product-list" class="product-list-container"></div>
 </div>
 
-<!-- Scripts -->
-<script type="module" src="./js/products.js"></script>
+<!-- Inclure uniquement menu.js -->
 <script type="module" src="./js/menu.js"></script>
-
 </body>
 </html>
