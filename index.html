@@ -1,341 +1,41 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menu 3D du Restaurant</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+function renderProducts() {
+  const filtered = getFilteredProducts();
+  productList.innerHTML = "";
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fafafa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    #app {
-      width: 100%;
-      max-width: 600px;
-      padding: 10px 10px 20px;
-    }
-
-    /* Barre du haut */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .menu-button {
-      display: inline-flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 4px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: none;
-      background: #007bff;
-      padding: 6px;
-      cursor: pointer;
-    }
-
-    .menu-button span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 2px;
-    }
-
-    .category-label {
-      flex: 1;
-      text-align: left;
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .category-label span {
-      font-weight: normal;
-      color: #666;
-      font-size: 14px;
-    }
-
-    /* Menu déroulant catégories */
-    .category-menu {
-      margin-top: 6px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      padding: 6px 0;
-      display: none; /* visible = block */
-    }
-
-    .category-menu button {
-      width: 100%;
-      text-align: left;
-      padding: 8px 12px;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .category-menu button:hover {
-      background: #f0f4ff;
-    }
-
-    /* Liste produits */
-    .product-list-container {
-      margin-top: 10px;
-      max-height: calc(100vh - 120px);
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .product-card {
-  display: flex;
-  flex-direction: row; /* ✅ image à gauche, texte à droite */
-  align-items: stretch;
-  background: #ffffff;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  overflow: hidden; /* texte ne dépasse pas la bannière */
-  min-height: 120px;
-}
-
-.product-media {
-  flex: 0 0 45%;
-  max-width: 45%;
-}
-
-.product-info {
-  flex: 1;
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-}
-
-
-    model-viewer {
-      width: 100%;
-      height: 140px;
-      background-color: #f0f0f0;
-      display: block;
-    }
-
-    .product-info {
-      flex: 1;
-      padding: 8px 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .product-name {
-      font-size: 15px;
-      font-weight: bold;
-      margin: 0 0 4px 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .product-desc {
-      font-size: 13px;
-      color: #555;
-      margin: 0;
-      line-height: 1.3;
-      max-height: 2.6em; /* environ 2 lignes */
-      overflow: hidden;
-    }
-
-    @media (max-width: 480px) {
-      .product-card {
-        min-height: 110px;
-      }
-      model-viewer {
-        height: 130px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-<div id="app">
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <button id="menu-toggle" class="menu-button" aria-label="Choisir une catégorie">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="category-label">
-      Catégorie : <span id="current-category-label">Toutes</span>
-    </div>
-  </div>
-
-  <!-- MENU CATEGORIES -->
-  <div id="category-menu" class="category-menu">
-    <button data-category="all">Toutes</button>
-    <button data-category="breakfast">Petit-déjeuner</button>
-    <button data-category="pizza">Pizzas</button>
-    <button data-category="burger">Burgers</button>
-    <button data-category="drink">Boissons</button>
-  </div>
-
-  <!-- LISTE PRODUITS -->
-  <div id="product-list" class="product-list-container">
-    <!-- cartes générées en JS -->
-  </div>
-</div>
-
-<script>
-  // =======================
-  // Données produits
-  // =======================
-  const products = [
-    {
-      name: "Breakfast Food Dish",
-      file: "breakfast_food_dish.glb",
-      category: "breakfast",
-      description: "Petit-déjeuner complet pour bien commencer la journée."
-    },
-    {
-      name: "Broccoli Pizza",
-      file: "broccoli_pizza.glb",
-      category: "pizza",
-      description: "Pizza gourmande garnie de brocoli et fromage fondant."
-    },
-    {
-      name: "Burger and Chips",
-      file: "burger_and_chips.glb",
-      category: "burger",
-      description: "Burger classique servi avec frites croustillantes."
-    },
-    {
-      name: "Coca Cola Can",
-      file: "coca_cola_can.glb",
-      category: "drink",
-      description: "Boisson rafraîchissante servie bien fraîche."
-    },
-    {
-      name: "Beer / Soda Bottle",
-      file: "glass_beersoda_bottle.glb",
-      category: "drink",
-      description: "Bouteille de boisson gazeuse ou bière selon vos envies."
-    },
-    {
-      name: "Hamburger",
-      file: "hamburger.glb",
-      category: "burger",
-      description: "Hamburger généreux avec steak, fromage et salade."
-    },
-    {
-      name: "Pepperoni Pizza",
-      file: "Pepperoni pizza.glb",
-      category: "pizza",
-      description: "Pizza au pepperoni légèrement épicée."
-    },
-    {
-      name: "Pizza Tray",
-      file: "pizza__tray.glb",
-      category: "pizza",
-      description: "Assortiment de parts de pizza sur plateau."
-    }
-  ];
-
-  const categoryLabels = {
-    all: "Toutes",
-    breakfast: "Petit-déjeuner",
-    pizza: "Pizzas",
-    burger: "Burgers",
-    drink: "Boissons"
-  };
-
-  // =======================
-  // Références DOM
-  // =======================
-  const menuToggleBtn = document.getElementById("menu-toggle");
-  const categoryMenu = document.getElementById("category-menu");
-  const currentCategoryLabel = document.getElementById("current-category-label");
-  const productList = document.getElementById("product-list");
-
-  let currentCategory = "all";
-
-  // =======================
-  // Fonctions
-  // =======================
-  function toggleCategoryMenu() {
-    const isVisible = categoryMenu.style.display === "block";
-    categoryMenu.style.display = isVisible ? "none" : "block";
+  if (filtered.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "Aucun produit dans cette catégorie.";
+    empty.style.padding = "10px";
+    productList.appendChild(empty);
+    return;
   }
 
-  function setCategory(catKey) {
-    currentCategory = catKey;
-    currentCategoryLabel.textContent = categoryLabels[catKey] || "Toutes";
-    categoryMenu.style.display = "none";
-    renderProducts();
-  }
+  let arRendered = false;
 
-  function getFilteredProducts() {
-    if (currentCategory === "all") return products;
-    return products.filter(p => p.category === currentCategory);
-  }
+  filtered.forEach(prod => {
+    const card = document.createElement("div");
+    card.className = "product-card";
 
-  function renderProducts() {
-    const filtered = getFilteredProducts();
-    productList.innerHTML = "";
+    const info = document.createElement("div");
+    info.className = "product-info";
 
-    if (filtered.length === 0) {
-      const empty = document.createElement("p");
-      empty.textContent = "Aucun produit dans cette catégorie.";
-      empty.style.padding = "10px";
-      productList.appendChild(empty);
-      return;
-    }
+    const name = document.createElement("h3");
+    name.className = "product-name";
+    name.textContent = prod.name;
 
-    filtered.forEach(prod => {
-      const card = document.createElement("div");
-      card.className = "product-card";
+    const desc = document.createElement("p");
+    desc.className = "product-desc";
+    desc.textContent = prod.description;
 
-      const info = document.createElement("div");
-      info.className = "product-info";
+    info.appendChild(name);
+    info.appendChild(desc);
 
-      const name = document.createElement("h3");
-      name.className = "product-name";
-      name.textContent = prod.name;
+    const media = document.createElement("div");
+    media.className = "product-media";
 
-      const desc = document.createElement("p");
-      desc.className = "product-desc";
-      desc.textContent = prod.description;
+    const ext = prod.file.split('.').pop().toLowerCase();
 
-      info.appendChild(name);
-      info.appendChild(desc);
-
-      const media = document.createElement("div");
-      media.className = "product-media";
-
+    if (ext === "glb" && !arRendered) {
       const mv = document.createElement("model-viewer");
       mv.setAttribute("src", prod.file);
       mv.setAttribute("alt", prod.name);
@@ -345,47 +45,20 @@
       mv.setAttribute("ar-modes", "webxr scene-viewer quick-look");
       mv.setAttribute("shadow-intensity", "1");
       mv.setAttribute("ar-scale", "fixed");
-
-      // Clic sur la photo => AR
-      mv.addEventListener("click", () => {
-        if (mv.activateAR) {
-          mv.activateAR();
-        }
-      });
-
       media.appendChild(mv);
-
-      card.appendChild(media);
-      card.appendChild(info);
-
-      productList.appendChild(card);
-    });
-  }
-
-  // =======================
-  // Événements
-  // =======================
-  menuToggleBtn.addEventListener("click", toggleCategoryMenu);
-
-  categoryMenu.addEventListener("click", (e) => {
-    if (e.target.matches("button[data-category]")) {
-      const cat = e.target.getAttribute("data-category");
-      setCategory(cat);
+      arRendered = true;
+    } else {
+      const img = document.createElement("img");
+      img.src = prod.file;
+      img.alt = prod.name;
+      img.style.width = "100%";
+      img.style.height = "140px";
+      img.style.objectFit = "cover";
+      media.appendChild(img);
     }
+
+    card.appendChild(media);
+    card.appendChild(info);
+    productList.appendChild(card);
   });
-
-  // Fermer le menu si on clique en dehors
-  document.addEventListener("click", (e) => {
-    if (!categoryMenu.contains(e.target) && !menuToggleBtn.contains(e.target)) {
-      categoryMenu.style.display = "none";
-    }
-  });
-
-  // =======================
-  // Initialisation
-  // =======================
-  renderProducts();
-</script>
-
-</body>
-</html>
+}
