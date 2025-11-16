@@ -5,14 +5,16 @@ const categoryMenu = document.getElementById("category-menu");
 const currentCategoryLabel = document.getElementById("restaurant-name");
 const productList = document.getElementById("product-list");
 
-// Kategorien dynamisch erzeugen
-const categoryLabels = {};
-products.forEach(p => {
-  if (!categoryLabels[p.category]) {
-    categoryLabels[p.category] = p.category.charAt(0).toUpperCase() + p.category.slice(1);
-  }
-});
+// Définir les labels des catégories correctement en allemand
+const categoryLabels = {
+  fruehstueck: "Frühstück",
+  pizza: "Pizza",
+  burger: "Burger",
+  getraenke: "Getränke",
+  salat: "Salat"
+};
 
+// Générer dynamiquement les catégories à partir du tableau products
 const categoryKeys = ["all", ...Object.keys(categoryLabels)];
 categoryKeys.forEach(key => {
   const btn = document.createElement("button");
