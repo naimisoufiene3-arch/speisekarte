@@ -1,57 +1,45 @@
-import { products, restaurant } from './products.js';
+import { products } from './products.js';
 
-const categoryLabels = {
-  fruehstueck: "Frühstück",
-  pizza: "Pizza",
-  burger: "Burger",
-  getraenke: "Getränke",
-  salat: "Salat"
-};
-
-// Références DOM
 const menuToggleBtn = document.getElementById("menu-toggle");
 const categoryMenu = document.getElementById("category-menu");
+const currentCategoryLabel = document.getElementById("restaurant-name");
 const productList = document.getElementById("product-list");
-const restaurantLogo = document.getElementById("restaurant-logo");
-const restaurantName = document.getElementById("restaurant-name");
+
+// Kategorien dynamisch erzeugen
+const categoryLabels = {};
+products.forEach(p => {
+  if (!categoryLabels[p.category]) {
+    categoryLabels[p.category] = p.category.charAt(0).toUpperCase() + p.category.slice(1);
+  }
+});
+
+const categoryKeys = ["all", ...Object.keys(categoryLabels)];
+categoryKeys.forEach(key => {
+  const btn = document.createElement("button");
+  btn.dataset.category = key;
+  btn.textContent = key === "all" ? "Alle" : categoryLabels[key];
+  categoryMenu.appendChild(btn);
+});
 
 let currentCategory = "all";
 
-// =======================
-// Initialisation restaurant
-// =======================
-restaurantLogo.src = restaurant.logo || "logo.PNG";
-restaurantName.textContent = restaurant.name || "Mein Restaurant";
-
-// =======================
-// Génération boutons catégories
-// =======================
-function renderCategoryButtons() {
-  categoryMenu.innerHTML = "";
-  const allBtn = document.createElement("button");
-  allBtn.setAttribute("data-category", "all");
-  allBtn.textContent = "Alle";
-  categoryMenu.appendChild(allBtn);
-
-  Object.keys(categoryLabels).forEach(catKey => {
-    const btn = document.createElement("button");
-    btn.setAttribute("data-category", catKey);
-    btn.textContent = categoryLabels[catKey];
-    categoryMenu.appendChild(btn);
-  });
+function toggleCategoryMenu() {
+  const isVisible = categoryMenu.style.display === "block";
+  categoryMenu.style.display = isVisible ? "none" : "block";
 }
 
-// =======================
-// Filtrer produits
-// =======================
+function setCategory(catKey) {
+  currentCategory = catKey;
+  currentCategoryLabel.textContent = catKey === "all" ? "Mein Restaurant" : categoryLabels[catKey];
+  categoryMenu.style.display = "none";
+  renderProducts();
+}
+
 function getFilteredProducts() {
   if (currentCategory === "all") return products;
   return products.filter(p => p.category === currentCategory);
 }
 
-// =======================
-// Afficher produits
-// =======================
 function renderProducts() {
   const filtered = getFilteredProducts();
   productList.innerHTML = "";
@@ -113,29 +101,17 @@ function renderProducts() {
   });
 }
 
-// =======================
-// Événements
-// =======================
-menuToggleBtn.addEventListener("click", () => {
-  categoryMenu.style.display = categoryMenu.style.display === "block" ? "none" : "block";
-});
-
-categoryMenu.addEventListener("click", (e) => {
+menuToggleBtn.addEventListener("click", toggleCategoryMenu);
+categoryMenu.addEventListener("click", e => {
   if (e.target.matches("button[data-category]")) {
-    currentCategory = e.target.getAttribute("data-category");
-    categoryMenu.style.display = "none";
-    renderProducts();
+    setCategory(e.target.dataset.category);
   }
 });
-
-document.addEventListener("click", (e) => {
+document.addEventListener("click", e => {
   if (!categoryMenu.contains(e.target) && !menuToggleBtn.contains(e.target)) {
     categoryMenu.style.display = "none";
   }
 });
 
-// =======================
-// Initialisation
-// =======================
-renderCategoryButtons();
+// initialisation
 renderProducts();
