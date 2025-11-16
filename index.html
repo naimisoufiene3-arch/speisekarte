@@ -203,10 +203,10 @@
     const media = document.createElement("div");
     media.className = "product-media";
 
-    // Détecter le format
     const ext = prod.file.split('.').pop().toLowerCase();
 
     if (ext === "glb") {
+      // Affiche tous les .glb en AR
       const mv = document.createElement("model-viewer");
       mv.setAttribute("src", prod.file);
       mv.setAttribute("alt", prod.name);
@@ -218,6 +218,7 @@
       mv.setAttribute("ar-scale", "fixed");
       media.appendChild(mv);
     } else {
+      // Affiche toutes les images
       const img = document.createElement("img");
       img.src = prod.file;
       img.alt = prod.name;
@@ -232,6 +233,7 @@
     productList.appendChild(card);
   });
 }
+
 
   menuToggleBtn.addEventListener("click", toggleCategoryMenu);
   categoryMenu.addEventListener("click", (e) => {
