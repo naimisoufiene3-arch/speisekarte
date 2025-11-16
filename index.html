@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu 3D du Restaurant</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #fafafa;
+    }
+
+    #menu-container {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 400px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 10px 0 5px 0;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-bar select {
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+
+    .controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    #ar-hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<div id="menu-container">
+  <h1>Menu 3D du Restaurant</h1>
+
+  <!-- Barre du haut : catégorie + bouton AR -->
+  <div class="top-bar">
+    <div>
+      <label for="category-select">Catégorie :</label>
+      <select id="category-select">
+        <option value="all">Toutes</option>
+        <option value="breakfast">Petit-déjeuner</option>
+        <option value="main">Plat</option>
+        <option value="burger">Burger</option>
+        <option value="pizza">Pizza</option>
+        <!-- Tu peux ajouter d'autres catégories -->
+      </select>
+    </div>
+
+    <!-- Bouton AR custom (optionnel, sinon model-viewer affiche le sien) -->
+    <button id="ar-button">Voir en AR 📱</button>
+  </div>
+
+  <h2 id="dish-name">Breakfast Food Dish</h2>
+
+  <model-viewer
+    id="dish-model"
+    src="breakfast_food_dish.glb"
+    alt="Plat 3D"
+    camera-controls
+    auto-rotate
+    ar
+    ar-modes="webxr"  <!-- important : pour garder l’UI dans le mode AR WebXR -->
+    ar-scale="fixed"
+    shadow-intensity="1"
+    style="width: 100%; height: 400px;"
+  >
+  </model-viewer>
+
+  <div class="controls">
+    <button id="prev">⬅ Précédent</button>
+    <button id="next">Suivant ➡</button>
+  </div>
+
+  <div id="ar-hint">
+    Astuce : en mode AR WebXR, le menu et les boutons restent disponibles dans la page.
+  </div>
+</div>
+
+<script>
+  // Liste des plats avec catégorie
+  const dishes = [
+    { name: "Breakfast Food Dish", file: "breakfast_food_dish.glb", category: "breakfast" },
+    { name: "Broccoli Pizza", file: "broccoli_pizza.glb", category: "pizza" },
+    { name: "Classic Hamburger", file: "hamburger.glb", category: "burger" },
+    // Tu peux ajouter d'autres plats ici
+    // { name: "Tacos", file: "tacos.glb", category: "main" },
+  ];
+
+  let currentIndex = 0;
+  let filteredDishes = [...dishes]; // par défaut : tous les plats
+
+  const dishName = document.getElementById("dish-name");
+  const dishModel = document.getElementById("dish-model");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  const categorySelect = document.getElementById("category-select");
+  const arButton = document.getElementById("ar-button");
+
+  function showDish(index) {
+    if (filteredDishes.length === 0) {
+      dishName.textContent = "Aucun plat dans cette catégorie";
+      dishModel.src = "";
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+
+    // Sécurité sur l’index
+    if (index < 0) index = 0;
+    if (index >= filteredDishes.length) index = filteredDishes.length - 1;
+    currentIndex = index;
+
+    const dish = filteredDishes[currentIndex];
+    dishName.textContent = dish.name;
+    dishModel.src = dish.file;
+
+    prevBtn.disabled = filteredDishes.length <= 1;
+    nextBtn.disabled = filteredDishes.length <= 1;
+  }
+
+  function applyFilter() {
+    const selectedCategory = categorySelect.value;
+
+    if (selectedCategory === "all") {
+      filteredDishes = [...dishes];
+    } else {
+      filteredDishes = dishes.filter(d => d.category === selectedCategory);
+    }
+
+    currentIndex = 0;
+    showDish(currentIndex);
+  }
+
+  // Navigation
+  prevBtn.addEventListener("click", () => {
+    if (filteredDishes.length === 0) return;
+    currentIndex = (currentIndex - 1 + filteredDishes.length) % filteredDishes.length;
+    showDish(currentIndex);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (filteredDishes.length === 0) return;
+    currentIndex = (currentIndex + 1) % filteredDishes.length;
+    showDish(currentIndex);
+  });
+
+  // Changement de catégorie
+  categorySelect.addEventListener("change", applyFilter);
+
+  // Bouton AR personnalisé (équivalent à cliquer sur le bouton AR de model-viewer)
+  arButton.addEventListener("click", () => {
+    dishModel.activateAR(); // API model-viewer
+  });
+
+  // Affichage initial
+  applyFilter();
+</script>
+
+</body>
+</html>
