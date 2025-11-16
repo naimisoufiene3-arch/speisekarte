@@ -3,12 +3,7 @@ export const products = [
   // ---------------------
   // Catégorie Petit-déjeuner
   // ---------------------
-  {
-    name: "Breakfast Food Dish",
-    file: "breakfast_food_dish.glb",
-    category: "breakfast",
-    description: "Petit-déjeuner complet pour bien commencer la journée."
-  },
+ 
 
   // ---------------------
   // Catégorie Pizza
@@ -72,5 +67,11 @@ export const products = [
     file: "chef_salade.jpg",
     category: "salad",
     description: "Salade préparée par le chef avec des ingrédients frais."
+  },
+ {
+    name: "salade mixte",
+    file: "breakfast_food_dish.glb",
+    category: "salad",
+    description: "Petit-déjeuner complet pour bien commencer la journée."
   }
 ];
