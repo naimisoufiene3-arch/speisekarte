@@ -10,12 +10,14 @@ function renderProducts() {
     return;
   }
 
-  let arRendered = false;
+  let arRendered = false; // Pour n'afficher qu'un seul AR par catégorie
 
   filtered.forEach(prod => {
+    // Création de la carte produit
     const card = document.createElement("div");
     card.className = "product-card";
 
+    // Info produit (nom + description)
     const info = document.createElement("div");
     info.className = "product-info";
 
@@ -30,6 +32,7 @@ function renderProducts() {
     info.appendChild(name);
     info.appendChild(desc);
 
+    // Media produit (AR ou image)
     const media = document.createElement("div");
     media.className = "product-media";
 
@@ -45,6 +48,7 @@ function renderProducts() {
       mv.setAttribute("ar-modes", "webxr scene-viewer quick-look");
       mv.setAttribute("shadow-intensity", "1");
       mv.setAttribute("ar-scale", "fixed");
+
       media.appendChild(mv);
       arRendered = true;
     } else {
@@ -57,6 +61,7 @@ function renderProducts() {
       media.appendChild(img);
     }
 
+    // Assemblage de la carte
     card.appendChild(media);
     card.appendChild(info);
     productList.appendChild(card);
