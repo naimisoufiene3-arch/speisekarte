@@ -1,77 +1,76 @@
 // products.js
 export const products = [
   // ---------------------
-  // Catégorie Petit-déjeuner
+  // Kategorie Frühstück
   // ---------------------
- 
 
   // ---------------------
-  // Catégorie Pizza
+  // Kategorie Pizza
   // ---------------------
   {
-    name: "Broccoli Pizza",
+    name: "Brokkoli-Pizza",
     file: "broccoli_pizza.glb",
     category: "pizza",
-    description: "Pizza gourmande garnie de brocoli et fromage fondant."
+    description: "Leckere Pizza mit Brokkoli und geschmolzenem Käse."
   },
   {
-    name: "Pepperoni Pizza",
+    name: "Pepperoni-Pizza",
     file: "Pepperoni pizza.glb",
     category: "pizza",
-    description: "Pizza au pepperoni légèrement épicée."
+    description: "Leicht scharfe Pepperoni-Pizza."
   },
   {
-    name: "Pizza Tray",
+    name: "Pizza-Tablett",
     file: "pizza__tray.glb",
     category: "pizza",
-    description: "Assortiment de parts de pizza sur plateau."
+    description: "Auswahl an Pizzastücken auf einem Tablett."
   },
 
   // ---------------------
-  // Catégorie Burger
+  // Kategorie Burger
   // ---------------------
   {
-    name: "Burger and Chips",
+    name: "Burger und Pommes",
     file: "burger_and_chips.glb",
     category: "burger",
-    description: "Burger classique servi avec frites croustillantes."
+    description: "Klassischer Burger, serviert mit knusprigen Pommes."
   },
   {
     name: "Hamburger",
     file: "hamburger.glb",
     category: "burger",
-    description: "Hamburger généreux avec steak, fromage et salade."
+    description: "Herzhafter Hamburger mit Steak, Käse und Salat."
   },
 
   // ---------------------
-  // Catégorie Boissons
+  // Kategorie Getränke
   // ---------------------
   {
-    name: "Coca Cola Can",
+    name: "Coca-Cola-Dose",
     file: "coca_cola_can.glb",
-    category: "drink",
-    description: "Boisson rafraîchissante servie bien fraîche."
+    category: "Getränk",
+    description: "Erfrischendes Getränk, gut gekühlt serviert."
   },
   {
-    name: "Beer / Soda Bottle",
+    name: "Bier-/Limonadenflasche",
     file: "glass_beersoda_bottle.glb",
-    category: "drink",
-    description: "Bouteille de boisson gazeuse ou bière selon vos envies."
+    category: "Getränk",
+    description: "Flasche mit kohlensäurehaltigem Getränk oder Bier nach Wunsch."
   },
 
   // ---------------------
-  // Produit image classique
+  // Klassisches Bildprodukt
   // ---------------------
   {
-    name: "Chef Salade",
+    name: "Chef-Salat",
     file: "chef_salade.jpg",
-    category: "salad",
-    description: "Salade préparée par le chef avec des ingrédients frais."
+    category: "salat",
+    description: "Salat, vom Küchenchef mit frischen Zutaten zubereitet."
   },
- {
-    name: "salade mixte",
+  {
+    name: "Gemischter Salat",
     file: "breakfast_food_dish.glb",
-    category: "salad",
-    description: "Petit-déjeuner complet pour bien commencer la journée."
+    category: "salat",
+    description: "Vollständiges Frühstück, um den Tag gut zu beginnen."
   }
 ];
