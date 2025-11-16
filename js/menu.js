@@ -89,7 +89,7 @@ function renderProducts() {
       mv.setAttribute("ar", "");
       mv.setAttribute("ar-modes", "webxr scene-viewer quick-look");
       mv.setAttribute("shadow-intensity", "1");
-      mv.setAttribute("ar-scale", "fixed");
+      mv.setAttribute("ar-scale", "auto");
       media.appendChild(mv);
     } else {
       const img = document.createElement("img");
