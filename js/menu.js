@@ -20,7 +20,7 @@ let currentCategory = "all";
 // =======================
 // Initialisation restaurant
 // =======================
-restaurantLogo.src = restaurant.logo || "Logo.PNG";
+restaurantLogo.src = restaurant.logo || "logo.PNG";
 restaurantName.textContent = restaurant.name || "Mein Restaurant";
 
 // =======================
