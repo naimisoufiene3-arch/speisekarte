@@ -25,12 +25,22 @@ categoryKeys.forEach(key => {
 
 let currentCategory = "all";
 
+// =======================
+// Fonctions
+// =======================
+
 function toggleCategoryMenu() {
   const isVisible = categoryMenu.style.display === "block";
   categoryMenu.style.display = isVisible ? "none" : "block";
 }
 
-setCategory
+function setCategory(catKey) {
+  currentCategory = catKey;
+  currentCategoryLabel.textContent = catKey === "all" ? "Mein Restaurant" : categoryLabels[catKey];
+  categoryMenu.style.display = "none";
+  renderProducts();
+}
+
 function getFilteredProducts() {
   if (currentCategory === "all") return products;
   return products.filter(p => p.category === currentCategory);
@@ -97,17 +107,23 @@ function renderProducts() {
   });
 }
 
+// =======================
+// Événements
+// =======================
+
 menuToggleBtn.addEventListener("click", toggleCategoryMenu);
+
 categoryMenu.addEventListener("click", e => {
   if (e.target.matches("button[data-category]")) {
     setCategory(e.target.dataset.category);
   }
 });
+
 document.addEventListener("click", e => {
   if (!categoryMenu.contains(e.target) && !menuToggleBtn.contains(e.target)) {
     categoryMenu.style.display = "none";
   }
 });
 
-// initialisation
+// Initialisation
 renderProducts();
