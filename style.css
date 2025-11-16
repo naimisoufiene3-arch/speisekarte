@@ -3,6 +3,7 @@ body { font-family: Arial, sans-serif; background:#fafafa; display:flex; flex-di
 #app { width:100%; max-width:600px; padding:10px 10px 20px; }
 
 .top-bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between; /* espace entre les éléments */
@@ -38,10 +39,12 @@ body { font-family: Arial, sans-serif; background:#fafafa; display:flex; flex-di
 }
 
 #restaurant-name {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-weight: bold;
   font-size: 18px;
   text-align: center;
-  flex: 1; /* occupe tout l’espace central */
 }
 
 #restaurant-logo {
