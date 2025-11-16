@@ -6,206 +6,385 @@
   <title>Menu 3D du Restaurant</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
+      background: #fafafa;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
-      background: #fafafa;
+      min-height: 100vh;
     }
 
-    #menu-container {
+    #app {
       width: 100%;
-      max-width: 500px;
-      text-align: center;
+      max-width: 600px;
+      padding: 10px 10px 20px;
     }
 
-    model-viewer {
-      width: 100%;
-      height: 400px;
-      background-color: #f0f0f0;
-      border-radius: 10px;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      margin: 10px 0 5px 0;
-    }
-
+    /* Barre du haut */
     .top-bar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      padding: 10px 12px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    .top-bar select {
-      padding: 5px 10px;
+    .menu-button {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #007bff;
+      padding: 6px;
+      cursor: pointer;
+    }
+
+    .menu-button span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 2px;
+    }
+
+    .category-label {
+      flex: 1;
+      text-align: left;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .category-label span {
+      font-weight: normal;
+      color: #666;
       font-size: 14px;
     }
 
-    .controls {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
+    /* Menu déroulant catégories */
+    .category-menu {
+      margin-top: 6px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      padding: 6px 0;
+      display: none; /* visible = block */
     }
 
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
+    .category-menu button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 12px;
       border: none;
-      background-color: #007bff;
-      color: white;
+      background: transparent;
+      font-size: 14px;
+      cursor: pointer;
     }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
+    .category-menu button:hover {
+      background: #f0f4ff;
     }
 
-    #ar-hint {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #666;
+    /* Liste produits */
+    .product-list-container {
+      margin-top: 10px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .product-card {
+  display: flex;
+  flex-direction: row; /* ✅ image à gauche, texte à droite */
+  align-items: stretch;
+  background: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  overflow: hidden; /* texte ne dépasse pas la bannière */
+  min-height: 120px;
+}
+
+.product-media {
+  flex: 0 0 45%;
+  max-width: 45%;
+}
+
+.product-info {
+  flex: 1;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+
+    model-viewer {
+      width: 100%;
+      height: 140px;
+      background-color: #f0f0f0;
+      display: block;
+    }
+
+    .product-info {
+      flex: 1;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .product-name {
+      font-size: 15px;
+      font-weight: bold;
+      margin: 0 0 4px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-desc {
+      font-size: 13px;
+      color: #555;
+      margin: 0;
+      line-height: 1.3;
+      max-height: 2.6em; /* environ 2 lignes */
+      overflow: hidden;
+    }
+
+    @media (max-width: 480px) {
+      .product-card {
+        min-height: 110px;
+      }
+      model-viewer {
+        height: 130px;
+      }
     }
   </style>
 </head>
 <body>
 
-<div id="menu-container">
-  <h1>Menu 3D du Restaurant</h1>
-
-  <!-- Barre du haut : catégorie + bouton AR -->
+<div id="app">
+  <!-- TOP BAR -->
   <div class="top-bar">
-    <div>
-      <label for="category-select">Catégorie :</label>
-      <select id="category-select">
-        <option value="all">Toutes</option>
-        <option value="breakfast">Petit-déjeuner</option>
-        <option value="main">Plat</option>
-        <option value="burger">Burger</option>
-        <option value="pizza">Pizza</option>
-        <!-- Tu peux ajouter d'autres catégories -->
-      </select>
+    <button id="menu-toggle" class="menu-button" aria-label="Choisir une catégorie">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="category-label">
+      Catégorie : <span id="current-category-label">Toutes</span>
     </div>
-
-    <!-- Bouton AR custom (optionnel, sinon model-viewer affiche le sien) -->
-    <button id="ar-button">Voir en AR 📱</button>
   </div>
 
-  <h2 id="dish-name">Breakfast Food Dish</h2>
-
-  <model-viewer
-    id="dish-model"
-    src="breakfast_food_dish.glb"
-    alt="Plat 3D"
-    camera-controls
-    auto-rotate
-    ar
-    ar-modes="webxr"  <!-- important : pour garder l’UI dans le mode AR WebXR -->
-    ar-scale="fixed"
-    shadow-intensity="1"
-    style="width: 100%; height: 400px;"
-  >
-  </model-viewer>
-
-  <div class="controls">
-    <button id="prev">⬅ Précédent</button>
-    <button id="next">Suivant ➡</button>
+  <!-- MENU CATEGORIES -->
+  <div id="category-menu" class="category-menu">
+    <button data-category="all">Toutes</button>
+    <button data-category="breakfast">Petit-déjeuner</button>
+    <button data-category="pizza">Pizzas</button>
+    <button data-category="burger">Burgers</button>
+    <button data-category="drink">Boissons</button>
   </div>
 
-  <div id="ar-hint">
-    Astuce : en mode AR WebXR, le menu et les boutons restent disponibles dans la page.
+  <!-- LISTE PRODUITS -->
+  <div id="product-list" class="product-list-container">
+    <!-- cartes générées en JS -->
   </div>
 </div>
 
 <script>
-  // Liste des plats avec catégorie
-  const dishes = [
-    { name: "Breakfast Food Dish", file: "breakfast_food_dish.glb", category: "breakfast" },
-    { name: "Broccoli Pizza", file: "broccoli_pizza.glb", category: "pizza" },
-    { name: "Classic Hamburger", file: "hamburger.glb", category: "burger" },
-    // Tu peux ajouter d'autres plats ici
-    // { name: "Tacos", file: "tacos.glb", category: "main" },
+  // =======================
+  // Données produits
+  // =======================
+  const products = [
+    {
+      name: "Breakfast Food Dish",
+      file: "breakfast_food_dish.glb",
+      category: "breakfast",
+      description: "Petit-déjeuner complet pour bien commencer la journée."
+    },
+    {
+      name: "Broccoli Pizza",
+      file: "broccoli_pizza.glb",
+      category: "pizza",
+      description: "Pizza gourmande garnie de brocoli et fromage fondant."
+    },
+    {
+      name: "Burger and Chips",
+      file: "burger_and_chips.glb",
+      category: "burger",
+      description: "Burger classique servi avec frites croustillantes."
+    },
+    {
+      name: "Coca Cola Can",
+      file: "coca_cola_can.glb",
+      category: "drink",
+      description: "Boisson rafraîchissante servie bien fraîche."
+    },
+    {
+      name: "Beer / Soda Bottle",
+      file: "glass_beersoda_bottle.glb",
+      category: "drink",
+      description: "Bouteille de boisson gazeuse ou bière selon vos envies."
+    },
+    {
+      name: "Hamburger",
+      file: "hamburger.glb",
+      category: "burger",
+      description: "Hamburger généreux avec steak, fromage et salade."
+    },
+    {
+      name: "Pepperoni Pizza",
+      file: "Pepperoni pizza.glb",
+      category: "pizza",
+      description: "Pizza au pepperoni légèrement épicée."
+    },
+    {
+      name: "Pizza Tray",
+      file: "pizza__tray.glb",
+      category: "pizza",
+      description: "Assortiment de parts de pizza sur plateau."
+    }
   ];
 
-  let currentIndex = 0;
-  let filteredDishes = [...dishes]; // par défaut : tous les plats
+  const categoryLabels = {
+    all: "Toutes",
+    breakfast: "Petit-déjeuner",
+    pizza: "Pizzas",
+    burger: "Burgers",
+    drink: "Boissons"
+  };
 
-  const dishName = document.getElementById("dish-name");
-  const dishModel = document.getElementById("dish-model");
-  const prevBtn = document.getElementById("prev");
-  const nextBtn = document.getElementById("next");
-  const categorySelect = document.getElementById("category-select");
-  const arButton = document.getElementById("ar-button");
+  // =======================
+  // Références DOM
+  // =======================
+  const menuToggleBtn = document.getElementById("menu-toggle");
+  const categoryMenu = document.getElementById("category-menu");
+  const currentCategoryLabel = document.getElementById("current-category-label");
+  const productList = document.getElementById("product-list");
 
-  function showDish(index) {
-    if (filteredDishes.length === 0) {
-      dishName.textContent = "Aucun plat dans cette catégorie";
-      dishModel.src = "";
-      prevBtn.disabled = true;
-      nextBtn.disabled = true;
+  let currentCategory = "all";
+
+  // =======================
+  // Fonctions
+  // =======================
+  function toggleCategoryMenu() {
+    const isVisible = categoryMenu.style.display === "block";
+    categoryMenu.style.display = isVisible ? "none" : "block";
+  }
+
+  function setCategory(catKey) {
+    currentCategory = catKey;
+    currentCategoryLabel.textContent = categoryLabels[catKey] || "Toutes";
+    categoryMenu.style.display = "none";
+    renderProducts();
+  }
+
+  function getFilteredProducts() {
+    if (currentCategory === "all") return products;
+    return products.filter(p => p.category === currentCategory);
+  }
+
+  function renderProducts() {
+    const filtered = getFilteredProducts();
+    productList.innerHTML = "";
+
+    if (filtered.length === 0) {
+      const empty = document.createElement("p");
+      empty.textContent = "Aucun produit dans cette catégorie.";
+      empty.style.padding = "10px";
+      productList.appendChild(empty);
       return;
     }
 
-    // Sécurité sur l’index
-    if (index < 0) index = 0;
-    if (index >= filteredDishes.length) index = filteredDishes.length - 1;
-    currentIndex = index;
+    filtered.forEach(prod => {
+      const card = document.createElement("div");
+      card.className = "product-card";
 
-    const dish = filteredDishes[currentIndex];
-    dishName.textContent = dish.name;
-    dishModel.src = dish.file;
+      const info = document.createElement("div");
+      info.className = "product-info";
 
-    prevBtn.disabled = filteredDishes.length <= 1;
-    nextBtn.disabled = filteredDishes.length <= 1;
+      const name = document.createElement("h3");
+      name.className = "product-name";
+      name.textContent = prod.name;
+
+      const desc = document.createElement("p");
+      desc.className = "product-desc";
+      desc.textContent = prod.description;
+
+      info.appendChild(name);
+      info.appendChild(desc);
+
+      const media = document.createElement("div");
+      media.className = "product-media";
+
+      const mv = document.createElement("model-viewer");
+      mv.setAttribute("src", prod.file);
+      mv.setAttribute("alt", prod.name);
+      mv.setAttribute("camera-controls", "");
+      mv.setAttribute("auto-rotate", "");
+      mv.setAttribute("ar", "");
+      mv.setAttribute("ar-modes", "webxr scene-viewer quick-look");
+      mv.setAttribute("shadow-intensity", "1");
+      mv.setAttribute("ar-scale", "fixed");
+
+      // Clic sur la photo => AR
+      mv.addEventListener("click", () => {
+        if (mv.activateAR) {
+          mv.activateAR();
+        }
+      });
+
+      media.appendChild(mv);
+
+      card.appendChild(media);
+      card.appendChild(info);
+
+      productList.appendChild(card);
+    });
   }
 
-  function applyFilter() {
-    const selectedCategory = categorySelect.value;
+  // =======================
+  // Événements
+  // =======================
+  menuToggleBtn.addEventListener("click", toggleCategoryMenu);
 
-    if (selectedCategory === "all") {
-      filteredDishes = [...dishes];
-    } else {
-      filteredDishes = dishes.filter(d => d.category === selectedCategory);
+  categoryMenu.addEventListener("click", (e) => {
+    if (e.target.matches("button[data-category]")) {
+      const cat = e.target.getAttribute("data-category");
+      setCategory(cat);
     }
-
-    currentIndex = 0;
-    showDish(currentIndex);
-  }
-
-  // Navigation
-  prevBtn.addEventListener("click", () => {
-    if (filteredDishes.length === 0) return;
-    currentIndex = (currentIndex - 1 + filteredDishes.length) % filteredDishes.length;
-    showDish(currentIndex);
   });
 
-  nextBtn.addEventListener("click", () => {
-    if (filteredDishes.length === 0) return;
-    currentIndex = (currentIndex + 1) % filteredDishes.length;
-    showDish(currentIndex);
+  // Fermer le menu si on clique en dehors
+  document.addEventListener("click", (e) => {
+    if (!categoryMenu.contains(e.target) && !menuToggleBtn.contains(e.target)) {
+      categoryMenu.style.display = "none";
+    }
   });
 
-  // Changement de catégorie
-  categorySelect.addEventListener("change", applyFilter);
-
-  // Bouton AR personnalisé (équivalent à cliquer sur le bouton AR de model-viewer)
-  arButton.addEventListener("click", () => {
-    dishModel.activateAR(); // API model-viewer
-  });
-
-  // Affichage initial
-  applyFilter();
+  // =======================
+  // Initialisation
+  // =======================
+  renderProducts();
 </script>
 
 </body>
