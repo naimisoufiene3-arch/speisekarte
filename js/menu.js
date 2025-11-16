@@ -2,7 +2,7 @@ import { products } from './products.js';
 
 const menuToggleBtn = document.getElementById("menu-toggle");
 const categoryMenu = document.getElementById("category-menu");
-const currentCategoryLabel = document.getElementById("restaurant-name");
+const currentCategoryLabel = document.getElementById("current-category-label");
 const productList = document.getElementById("product-list");
 
 // Définir les labels des catégories correctement en allemand
@@ -36,7 +36,7 @@ function toggleCategoryMenu() {
 
 function setCategory(catKey) {
   currentCategory = catKey;
-  currentCategoryLabel.textContent = catKey === "all" ? "Mein Restaurant" : categoryLabels[catKey];
+  currentCategoryLabel.textContent = catKey === "all" ? "Alle" : categoryLabels[catKey];
   categoryMenu.style.display = "none";
   renderProducts();
 }
