@@ -30,13 +30,7 @@ function toggleCategoryMenu() {
   categoryMenu.style.display = isVisible ? "none" : "block";
 }
 
-function setCategory(catKey) {
-  currentCategory = catKey;
-  currentCategoryLabel.textContent = catKey === "all" ? "Mein Restaurant" : categoryLabels[catKey];
-  categoryMenu.style.display = "none";
-  renderProducts();
-}
-
+setCategory
 function getFilteredProducts() {
   if (currentCategory === "all") return products;
   return products.filter(p => p.category === currentCategory);
