@@ -3,10 +3,51 @@ body { font-family: Arial, sans-serif; background:#fafafa; display:flex; flex-di
 #app { width:100%; max-width:600px; padding:10px 10px 20px; }
 
 .top-bar {
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:10px 12px; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08);
-  position:sticky; top:0; z-index:10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
+
+.menu-button {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #007bff;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.menu-button span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+#restaurant-logo {
+  height: 40px;
+  border-radius: 5px;
+}
+
+#restaurant-name {
+  font-weight: bold;
+  font-size: 18px;
+  flex: 1; /* occupe tout l’espace restant */
+}
+
 #restaurant-logo { height:40px; border-radius:5px; }
 #restaurant-name { font-weight:bold; font-size:18px; flex:1; text-align:left; }
 .menu-button { display:inline-flex; flex-direction:column; justify-content:center; gap:4px; width:32px; height:32px; border-radius:50%; border:none; background:#007bff; padding:6px; cursor:pointer; }
