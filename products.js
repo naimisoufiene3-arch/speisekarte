@@ -1,8 +1,19 @@
 // products.js
+export const restaurant = {
+  name: "Mein Restaurant", // Nom du restaurant
+  logo: "Logo.PNG"         // Logo par défaut
+};
+
 export const products = [
   // ---------------------
   // Kategorie Frühstück
   // ---------------------
+  {
+    name: "Gemischtes Frühstück",
+    file: "breakfast_food_dish.glb",
+    category: "fruehstueck",
+    description: "Vollständiges Frühstück, um den Tag gut zu beginnen."
+  },
 
   // ---------------------
   // Kategorie Pizza
@@ -48,13 +59,13 @@ export const products = [
   {
     name: "Coca-Cola-Dose",
     file: "coca_cola_can.glb",
-    category: "Getränk",
+    category: "getraenke",
     description: "Erfrischendes Getränk, gut gekühlt serviert."
   },
   {
     name: "Bier-/Limonadenflasche",
     file: "glass_beersoda_bottle.glb",
-    category: "Getränk",
+    category: "getraenke",
     description: "Flasche mit kohlensäurehaltigem Getränk oder Bier nach Wunsch."
   },
 
@@ -66,11 +77,5 @@ export const products = [
     file: "chef_salade.jpg",
     category: "salat",
     description: "Salat, vom Küchenchef mit frischen Zutaten zubereitet."
-  },
-  {
-    name: "Gemischter Salat",
-    file: "breakfast_food_dish.glb",
-    category: "salat",
-    description: "Vollständiges Frühstück, um den Tag gut zu beginnen."
   }
 ];

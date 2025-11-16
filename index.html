@@ -1,255 +1,36 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menu 3D du Restaurant</title>
+  <title>Mein Restaurant Menu 3D</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fafafa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    #app {
-      width: 100%;
-      max-width: 600px;
-      padding: 10px 10px 20px;
-    }
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .menu-button {
-      display: inline-flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 4px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: none;
-      background: #007bff;
-      padding: 6px;
-      cursor: pointer;
-    }
-    .menu-button span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 2px;
-    }
-    .category-label { flex: 1; text-align: left; font-size: 16px; font-weight: bold; color: #333; }
-    .category-label span { font-weight: normal; color: #666; font-size: 14px; }
-    .category-menu {
-      margin-top: 6px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      padding: 6px 0;
-      display: none;
-    }
-    .category-menu button {
-      width: 100%;
-      text-align: left;
-      padding: 8px 12px;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .category-menu button:hover { background: #f0f4ff; }
-    .product-list-container {
-      margin-top: 10px;
-      max-height: calc(100vh - 120px);
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .product-card {
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      background: #ffffff;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      overflow: hidden;
-      min-height: 120px;
-    }
-    .product-media { flex: 0 0 45%; max-width: 45%; }
-    .product-info {
-      flex: 1;
-      padding: 8px 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
-    }
-    model-viewer { width: 100%; height: 140px; background-color: #f0f0f0; display: block; }
-    .product-name { font-size: 15px; font-weight: bold; margin: 0 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .product-desc { font-size: 13px; color: #555; margin: 0; line-height: 1.3; max-height: 2.6em; overflow: hidden; }
-    @media (max-width: 480px) {
-      .product-card { min-height: 110px; }
-      model-viewer { height: 130px; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css"> <!-- Ton CSS existant -->
 </head>
 <body>
+
 <div id="app">
+  <!-- En-tête avec logo et nom -->
   <div class="top-bar">
-    <button id="menu-toggle" class="menu-button" aria-label="Choisir une catégorie">
-      <span></span><span></span><span></span>
+    <img id="restaurant-logo" src="Logo.PNG" alt="Logo" style="height:40px; border-radius:5px;">
+    <div id="restaurant-name" style="font-weight:bold; font-size:18px; margin-left:10px;">Mein Restaurant</div>
+    <button id="menu-toggle" class="menu-button" aria-label="Kategorie wählen">
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
-    <div class="category-label">
-      Catégorie : <span id="current-category-label">Toutes</span>
-    </div>
   </div>
 
-  <div id="category-menu" class="category-menu">
-    <!-- Boutons générés dynamiquement -->
-  </div>
+  <!-- Menu catégories -->
+  <div id="category-menu" class="category-menu"></div>
 
+  <!-- Liste produits -->
   <div id="product-list" class="product-list-container"></div>
 </div>
 
-<script type="module">
-  import { products } from './products.js';
+<!-- Scripts -->
+<script type="module" src="./js/products.js"></script>
+<script type="module" src="./js/menu.js"></script>
 
-  const menuToggleBtn = document.getElementById("menu-toggle");
-  const categoryMenu = document.getElementById("category-menu");
-  const currentCategoryLabel = document.getElementById("current-category-label");
-  const productList = document.getElementById("product-list");
-
-  // Générer dynamiquement les catégories
-  const categoryLabels = {};
-  products.forEach(p => {
-    if (!categoryLabels[p.category]) {
-      categoryLabels[p.category] = p.category.charAt(0).toUpperCase() + p.category.slice(1);
-    }
-  });
-
-  const categoryKeys = ["all", ...Object.keys(categoryLabels)];
-  categoryKeys.forEach(key => {
-    const btn = document.createElement("button");
-    btn.dataset.category = key;
-    btn.textContent = key === "all" ? "Toutes" : categoryLabels[key];
-    categoryMenu.appendChild(btn);
-  });
-
-  let currentCategory = "all";
-
-  function toggleCategoryMenu() {
-    const isVisible = categoryMenu.style.display === "block";
-    categoryMenu.style.display = isVisible ? "none" : "block";
-  }
-
-  function setCategory(catKey) {
-    currentCategory = catKey;
-    currentCategoryLabel.textContent = catKey === "all" ? "Toutes" : categoryLabels[catKey];
-    categoryMenu.style.display = "none";
-    renderProducts();
-  }
-
-  function getFilteredProducts() {
-    if (currentCategory === "all") return products;
-    return products.filter(p => p.category === currentCategory);
-  }
-
-  function renderProducts() {
-  const filtered = getFilteredProducts();
-  productList.innerHTML = "";
-
-  if (filtered.length === 0) {
-    const empty = document.createElement("p");
-    empty.textContent = "Aucun produit dans cette catégorie.";
-    empty.style.padding = "10px";
-    productList.appendChild(empty);
-    return;
-  }
-
-  filtered.forEach(prod => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-
-    const info = document.createElement("div");
-    info.className = "product-info";
-
-    const name = document.createElement("h3");
-    name.className = "product-name";
-    name.textContent = prod.name;
-
-    const desc = document.createElement("p");
-    desc.className = "product-desc";
-    desc.textContent = prod.description;
-
-    info.appendChild(name);
-    info.appendChild(desc);
-
-    const media = document.createElement("div");
-    media.className = "product-media";
-
-    const ext = prod.file.split('.').pop().toLowerCase();
-
-    if (ext === "glb") {
-      // Affiche tous les .glb en AR
-      const mv = document.createElement("model-viewer");
-      mv.setAttribute("src", prod.file);
-      mv.setAttribute("alt", prod.name);
-      mv.setAttribute("camera-controls", "");
-      mv.setAttribute("auto-rotate", "");
-      mv.setAttribute("ar", "");
-      mv.setAttribute("ar-modes", "webxr scene-viewer quick-look");
-      mv.setAttribute("shadow-intensity", "1");
-      mv.setAttribute("ar-scale", "fixed");
-      media.appendChild(mv);
-    } else {
-      // Affiche toutes les images
-      const img = document.createElement("img");
-      img.src = prod.file;
-      img.alt = prod.name;
-      img.style.width = "100%";
-      img.style.height = "140px";
-      img.style.objectFit = "cover";
-      media.appendChild(img);
-    }
-
-    card.appendChild(media);
-    card.appendChild(info);
-    productList.appendChild(card);
-  });
-}
-
-
-  menuToggleBtn.addEventListener("click", toggleCategoryMenu);
-  categoryMenu.addEventListener("click", (e) => {
-    if (e.target.matches("button[data-category]")) {
-      setCategory(e.target.dataset.category);
-    }
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!categoryMenu.contains(e.target) && !menuToggleBtn.contains(e.target)) {
-      categoryMenu.style.display = "none";
-    }
-  });
-
-  // Initialisation
-  renderProducts();
-</script>
 </body>
 </html>
